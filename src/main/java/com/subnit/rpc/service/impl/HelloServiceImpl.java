@@ -3,7 +3,7 @@ package com.subnit.rpc.service.impl;
 import com.subnit.rpc.service.HelloService;
 
 /**
- * 描述:
+ * description:
  * date : create in 22:18 2018/6/4
  * modified by :
  *

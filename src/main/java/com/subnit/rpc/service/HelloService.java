@@ -1,7 +1,7 @@
 package com.subnit.rpc.service;
 
 /**
- * 描述:
+ * description:
  * date : create in 22:17 2018/6/4
  * modified by :
  *

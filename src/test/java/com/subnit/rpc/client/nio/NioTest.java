@@ -1,9 +1,9 @@
-package simple;
+package com.subnit.rpc.client.nio;
 
-import org.junit.Test;
 import com.subnit.rpc.client.simple.SimpleSocketClient;
 import com.subnit.rpc.service.HelloService;
 import com.subnit.rpc.service.impl.HelloServiceImpl;
+import org.junit.Test;
 
 /**
  * description:
@@ -14,15 +14,16 @@ import com.subnit.rpc.service.impl.HelloServiceImpl;
  */
 
 
-public class SimpleSocketTest {
+public class NioTest {
 
 
     @Test
-    public void ClientTest() {
+    public void NioClientTest() {
         HelloService helloRpc = new HelloServiceImpl();
-        SimpleSocketClient.ip = "127.0.0.1";
-        SimpleSocketClient.port = 9999;
-        helloRpc = SimpleSocketClient.create(helloRpc);
+        NioSocketClient nioSocketClient = new NioSocketClient();
+        nioSocketClient.setPort(9999);
+        nioSocketClient.setIp("127.0.0.1");
+        helloRpc = nioSocketClient.create(helloRpc);
         System.out.println(helloRpc.hello("rpc"));
     }
 
