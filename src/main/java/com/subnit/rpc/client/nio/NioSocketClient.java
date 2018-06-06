@@ -4,16 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.subnit.rpc.util.MethodDTO;
 import lombok.Data;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 
 /**
  * description:
@@ -24,9 +22,26 @@ import java.util.Arrays;
  */
 @Data
 public class NioSocketClient {
-    private  String ip;
-    private  Integer port;
     private SocketChannel socketChannel;
+    private ByteBuffer buffer = ByteBuffer.allocate(1024);
+    private Selector selector = null;
+
+
+    public NioSocketClient init(String serverIp, Integer port) {
+        try {
+            System.out.println("------客户端要启动了--------");
+            selector = Selector.open();
+            InetSocketAddress isa = new InetSocketAddress(serverIp, port);
+            socketChannel = SocketChannel.open(isa);
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_READ);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
 
 
     @SuppressWarnings("unchecked")
@@ -38,9 +53,7 @@ public class NioSocketClient {
 
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        socketChannel = SocketChannel.open();
-                        socketChannel.configureBlocking(false);
-                        socketChannel.connect(new InetSocketAddress(ip, port));
+
                         ByteBuffer buffer = ByteBuffer.allocate(1024);
                         String message = buildSendingMessage(target, method, args);
                         buffer.clear();
@@ -55,20 +68,38 @@ public class NioSocketClient {
                             while(buffer.hasRemaining()) {
                             socketChannel.write(buffer);
                         }
-
-                        buffer.clear();
-                        StringBuffer result = new StringBuffer();
-                        while (socketChannel.read(buffer) != -1) {
-                            result.append(Arrays.toString(buffer.array()));
-                        }
-                        socketChannel.close();
-                        return result;
+                        return getResult();
                     }
                 } );
     }
 
 
-    public  String buildSendingMessage(Object target, Method method, Object[] args) {
+    private String getResult() {
+        try {
+            while (selector.select() > 0) {
+                for (SelectionKey sk : selector.selectedKeys()) {
+                    selector.selectedKeys().remove(sk);
+                    if (sk.isReadable()) {
+                        SocketChannel sc = (SocketChannel) sk.channel();
+                        buffer.clear();
+                        StringBuilder result = new StringBuilder();
+                        sc.read(buffer);
+                        buffer.flip();
+                        while (buffer.hasRemaining()) {
+                            result.append((char)buffer.get());
+                        }
+                        return result.toString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+
+    private  String buildSendingMessage(Object target, Method method, Object[] args) {
         String ClassName = target.getClass().getName();
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();

@@ -21,9 +21,8 @@ public class NioTest {
     public void NioClientTest() {
         HelloService helloRpc = new HelloServiceImpl();
         NioSocketClient nioSocketClient = new NioSocketClient();
-        nioSocketClient.setPort(9999);
-        nioSocketClient.setIp("127.0.0.1");
-        helloRpc = nioSocketClient.create(helloRpc);
+        NioSocketClient client = nioSocketClient.init("127.0.0.1", 9999);
+        helloRpc = client.create(helloRpc);
         System.out.println(helloRpc.hello("rpc"));
     }
 
