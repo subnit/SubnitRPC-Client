@@ -10,19 +10,19 @@ import lombok.Data;
  * @author subo
  */
 @Data
-public class MethodDTO {
+public class MethodInfoStr {
     private String className;
     private String methodName;
     private String parameterTypesString;
     private String argsString;
 
-    public MethodDTO() {
+    public MethodInfoStr() {
     }
 
-    public MethodDTO(String className,
-                     String methodName,
-                     String parameterTypesString,
-                     String argsString) {
+    public MethodInfoStr(String className,
+                         String methodName,
+                         String parameterTypesString,
+                         String argsString) {
         this.className = className;
         this.methodName = methodName;
         this.parameterTypesString = parameterTypesString;

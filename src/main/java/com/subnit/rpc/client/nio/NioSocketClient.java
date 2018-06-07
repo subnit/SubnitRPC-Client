@@ -1,7 +1,7 @@
 package com.subnit.rpc.client.nio;
 
 import com.alibaba.fastjson.JSONObject;
-import com.subnit.rpc.util.MethodDTO;
+import com.subnit.rpc.util.MethodInfoStr;
 import lombok.Data;
 
 import java.lang.reflect.InvocationHandler;
@@ -105,6 +105,6 @@ public class NioSocketClient {
         Class<?>[] parameterTypes = method.getParameterTypes();
         String parameterTypesString = JSONObject.toJSONString(parameterTypes);
         String argsString = JSONObject.toJSONString(args);
-        return JSONObject.toJSONString(new MethodDTO(ClassName, methodName, parameterTypesString, argsString));
+        return JSONObject.toJSONString(new MethodInfoStr(ClassName, methodName, parameterTypesString, argsString));
     }
 }

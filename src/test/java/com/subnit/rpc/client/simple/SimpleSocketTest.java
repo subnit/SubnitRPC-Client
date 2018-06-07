@@ -1,7 +1,6 @@
-package simple;
+package com.subnit.rpc.client.simple;
 
 import org.junit.Test;
-import com.subnit.rpc.client.simple.SimpleSocketClient;
 import com.subnit.rpc.service.HelloService;
 import com.subnit.rpc.service.impl.HelloServiceImpl;
 
