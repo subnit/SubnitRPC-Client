@@ -15,7 +15,7 @@ public class ResultHandler extends ChannelInboundHandlerAdapter {
     private Object response;
 
     public Object getResponse() {
-        return response;
+         return response;
     }
 
     @Override
